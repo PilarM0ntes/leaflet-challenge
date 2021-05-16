@@ -5,7 +5,7 @@ let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_we
 let earthquakeCircles = [];
 
 d3.json(queryUrl).then(function(data){
-    
+    console.log(data);
     let earthquakes = data.features.slice(0,500);
     console.log(earthquakes);
     earthquakes.forEach(earthquake =>{
@@ -70,7 +70,36 @@ function createMap(earthquakeLayer){
         });
     
         L.control.layers(baseMaps, overlayMaps).addTo(myMap);
+
+        //Create Legends
+        let legend = L.control({position: "bottomright"});
+        legend.onAdd = function(){
+            let div = L.DomUtil.create("div", "info legend");
+            let labels = []
+            let limits = [90, 69];
+            let categories = ["+90", "70-90"];
+
+
+
+            limits.forEach(function(limit, index){
+                let label = "<rect x=\"10\" y=\"" + (10+(50*index)) + "\" height=\"40\""+
+                " width=\"40\" style=\"fill:" + getColor(limit +1) + 
+                ";fill-opacity:0.75;\"/>";
+
+                labels.push(label);
+            });
+
+            div.innerHTML += "<svg height=\"300\" width=\"200\" style=\"background-color:white\">"+
+            labels.join("") + "</svg>";
+            console.log(div);
+            return div;
+
+        };
+        // Adding legend to the map
+        legend.addTo(myMap);
 }
+
+
 
 
 
