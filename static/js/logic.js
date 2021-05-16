@@ -6,7 +6,7 @@ let earthquakeCircles = [];
 
 d3.json(queryUrl).then(function(data){
     
-    let earthquakes = data.features.slice(0,200);
+    let earthquakes = data.features.slice(0,500);
     console.log(earthquakes);
     earthquakes.forEach(earthquake =>{
         let long = earthquake.geometry.coordinates[0];
@@ -23,40 +23,57 @@ d3.json(queryUrl).then(function(data){
                 radius: mag*10000
             }).bindPopup(earthquake.properties.place)
         );
-           
-
     });
 
-});
+    // Add the circles markets to a layer group
+    let earthquakeLayer = L.layerGroup(earthquakeCircles);
+    console.log("Earthquake");
+    console.log(earthquakeCircles)
 
-// Add the circles markets to a layer group
-let earthquakeLayer = L.layerGroup(earthquakeCircles);
-
-// Create the background map image
-let lightMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-  attribution: "",
-  tileSize: 512,
-  maxZoom: 18,
-  zoomOffset: -1,
-  id: "mapbox/light-v10",
-  accessToken: API_KEY
-});
-
-let satelliteMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    // Create the background map image
+    let lightMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
     attribution: "",
     tileSize: 512,
     maxZoom: 18,
     zoomOffset: -1,
-    id: "mapbox/satellite-v9",
+    id: "mapbox/light-v10",
     accessToken: API_KEY
-  });
+    });
 
+    let outdoorMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "",
+        tileSize: 512,
+        maxZoom: 18,
+        zoomOffset: -1,
+        id: "mapbox/outdoors-v11",
+        accessToken: API_KEY
+    });
 
-//Create the map object (centered in the US)
-let myMap = L.map("map",{
-    center: [37.09, -95.71],
-    zoom: 5
+    // Create Map options
+    let baseMaps = {
+        Light: lightMap,
+        Outdoors: outdoorMap
+    };
+
+    // Create the overlay options
+    let overlayMaps = {
+        Earthquake: earthquakeLayer
+    };
+
+    //Create the map object (centered in the US)
+    let myMap = L.map("map",{
+        center: [37.09, -95.71],
+        zoom: 5,
+        layers: [lightMap, earthquakeLayer]
+    });
+
+    L.control.layers(baseMaps, overlayMaps).addTo(myMap);
+
 });
+
+
+
+
 
 // Function to get the color of the circle
 // based on the depth of the earthquake
