@@ -1,18 +1,12 @@
-//Create the map object (centered in the US)
-let myMap = L.map("map",{
-    center: [37.09, -95.71],
-    zoom: 5
-});
-
-
 // Get the earthquake data from the last 7 days
+// Only the first 200 records
 
 let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 let earthquakeCircles = [];
 
 d3.json(queryUrl).then(function(data){
     
-    let earthquakes = data.features;
+    let earthquakes = data.features.slice(0,200);
     console.log(earthquakes);
     earthquakes.forEach(earthquake =>{
         let long = earthquake.geometry.coordinates[0];
@@ -46,8 +40,23 @@ let lightMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
   zoomOffset: -1,
   id: "mapbox/light-v10",
   accessToken: API_KEY
-}).addTo(myMap);
+});
 
+let satelliteMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "",
+    tileSize: 512,
+    maxZoom: 18,
+    zoomOffset: -1,
+    id: "mapbox/satellite-v9",
+    accessToken: API_KEY
+  });
+
+
+//Create the map object (centered in the US)
+let myMap = L.map("map",{
+    center: [37.09, -95.71],
+    zoom: 5
+});
 
 // Function to get the color of the circle
 // based on the depth of the earthquake
