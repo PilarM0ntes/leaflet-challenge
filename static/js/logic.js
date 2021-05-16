@@ -1,5 +1,5 @@
 // Get the earthquake data from the last 7 days
-// Only the first 200 records
+// Only the first 500 records
 
 let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 let earthquakeCircles = [];
@@ -21,55 +21,56 @@ d3.json(queryUrl).then(function(data){
                 fillColor: color,
                 fillOpacity: 0.75,
                 radius: mag*10000
-            }).bindPopup(earthquake.properties.place)
+            }).bindPopup("<h3>" + earthquake.properties.place + "</h3>")
         );
     });
 
     // Add the circles markets to a layer group
     let earthquakeLayer = L.layerGroup(earthquakeCircles);
-    console.log("Earthquake");
-    console.log(earthquakeCircles)
-
-    // Create the background map image
-    let lightMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-    attribution: "",
-    tileSize: 512,
-    maxZoom: 18,
-    zoomOffset: -1,
-    id: "mapbox/light-v10",
-    accessToken: API_KEY
-    });
-
-    let outdoorMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution: "",
-        tileSize: 512,
-        maxZoom: 18,
-        zoomOffset: -1,
-        id: "mapbox/outdoors-v11",
-        accessToken: API_KEY
-    });
-
-    // Create Map options
-    let baseMaps = {
-        Light: lightMap,
-        Outdoors: outdoorMap
-    };
-
-    // Create the overlay options
-    let overlayMaps = {
-        Earthquake: earthquakeLayer
-    };
-
-    //Create the map object (centered in the US)
-    let myMap = L.map("map",{
-        center: [37.09, -95.71],
-        zoom: 5,
-        layers: [lightMap, earthquakeLayer]
-    });
-
-    L.control.layers(baseMaps, overlayMaps).addTo(myMap);
+    createMap(earthquakeLayer);
 
 });
+
+function createMap(earthquakeLayer){
+        // Create the background map image
+        let lightMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+            attribution: "",
+            tileSize: 512,
+            maxZoom: 18,
+            zoomOffset: -1,
+            id: "mapbox/light-v10",
+            accessToken: API_KEY
+            });
+        
+        let outdoorMap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+            attribution: "",
+            tileSize: 512,
+            maxZoom: 18,
+            zoomOffset: -1,
+            id: "mapbox/outdoors-v11",
+            accessToken: API_KEY
+        });
+    
+        // Create Map options
+        let baseMaps = {
+            Light: lightMap,
+            Outdoors: outdoorMap
+        };
+    
+        // Create the overlay options
+        let overlayMaps = {
+            Earthquake: earthquakeLayer
+        };
+    
+        //Create the map object (centered in the US)
+        let myMap = L.map("map",{
+            center: [37.09, -95.71],
+            zoom: 5,
+            layers: [lightMap, earthquakeLayer]
+        });
+    
+        L.control.layers(baseMaps, overlayMaps).addTo(myMap);
+}
 
 
 
@@ -87,11 +88,11 @@ function getColor(depth){
     } else if (depth > 49){
         color = "#F0DD5D"; // Yellow
     } else if (depth > 29){
-        color = "#0DB14B"; // Green
+        color = "#83D1C4"; // Aqua
     } else if (depth > 9){
-        color = "#83D1C4"; //Aqua
+        color = "#B5D3E7"; //Light Blue
     } else{
-        color = "#1C4481"; //Blue
+        color = "#FFD1DC"; // Pink
     }
     return color;
 }
