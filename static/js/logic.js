@@ -1,12 +1,12 @@
 // Get the earthquake data from the last 7 days
-// Only the first 500 records
+
 
 let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 let earthquakeCircles = [];
 
 d3.json(queryUrl).then(function(data){
     console.log(data);
-    let earthquakes = data.features.slice(0,500);
+    let earthquakes = data.features;
     console.log(earthquakes);
     earthquakes.forEach(earthquake =>{
         let long = earthquake.geometry.coordinates[0];
@@ -14,14 +14,16 @@ d3.json(queryUrl).then(function(data){
         let depth = earthquake.geometry.coordinates[2];
         let mag = earthquake.properties.mag;
         let color = getColor(depth);
-
+        let popText = "<h3>" + earthquake.properties.place + "</h3>" +
+                        "<hr> <p>Magnitude: "+ mag + "<br>Depth: "
+                        + depth.toFixed(2) +"</p>"
         earthquakeCircles.push(
             L.circle([lat,long], {
                 color: color,
                 fillColor: color,
                 fillOpacity: 0.75,
                 radius: mag*10000
-            }).bindPopup("<h3>" + earthquake.properties.place + "</h3>")
+            }).bindPopup(popText)
         );
     });
 
@@ -97,7 +99,7 @@ function createMap(earthquakeLayer){
 
             div.innerHTML += "<svg height=\"300\" width=\"150\" style=\"background-color:white\">"+
             labels.join("") + "</svg>";
-            console.log(div);
+
             return div;
 
         };
