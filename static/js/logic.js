@@ -76,20 +76,26 @@ function createMap(earthquakeLayer){
         legend.onAdd = function(){
             let div = L.DomUtil.create("div", "info legend");
             let labels = []
-            let limits = [90, 69];
-            let categories = ["+90", "70-90"];
+            let limits = [8,9,29,49,69,90];
+            let categories = ["-10-10","10-30","30-50","50-70", "70-90","+90"];
 
 
+            labels.push("<text x =\"10\" y=\"25\""
+                + "style=\"font-size:20px; font-weight:bold;\">"+
+                "Quake Depth"+"</text>");
 
             limits.forEach(function(limit, index){
-                let label = "<rect x=\"10\" y=\"" + (10+(50*index)) + "\" height=\"40\""+
+                //Create the square for the legend & the text
+                let ypos = 40+(40*index)
+                let label = "<rect x=\"10\" y=\"" + ypos + "\" height=\"40\""+
                 " width=\"40\" style=\"fill:" + getColor(limit +1) + 
-                ";fill-opacity:0.75;\"/>";
+                ";fill-opacity:0.75;\"/> <text x =\"60\" y=\"" + (ypos+25) +
+                "\" style=\"font-size:20px;\">"+categories[index]+"</text>";
 
                 labels.push(label);
             });
 
-            div.innerHTML += "<svg height=\"300\" width=\"200\" style=\"background-color:white\">"+
+            div.innerHTML += "<svg height=\"300\" width=\"150\" style=\"background-color:white\">"+
             labels.join("") + "</svg>";
             console.log(div);
             return div;
@@ -111,17 +117,17 @@ function createMap(earthquakeLayer){
 function getColor(depth){
     let color = "";
     if (depth > 90){
-        color = "#D9302C"; // Red
+        color = "#022D41"; // Cyprus
     } else if (depth > 69){
-        color = "#E6873C"; // Orange
+        color = "#FE424D"; // Crush
     } else if (depth > 49){
-        color = "#F0DD5D"; // Yellow
+        color = "#F8981D"; // Orange
     } else if (depth > 29){
-        color = "#83D1C4"; // Aqua
+        color = "#5BBDC8"; // Turquoise
     } else if (depth > 9){
-        color = "#B5D3E7"; //Light Blue
+        color = "#F0DD5D"; //Yellow
     } else{
-        color = "#FFD1DC"; // Pink
+        color = "#FEC0C1"; // Blush
     }
     return color;
 }
